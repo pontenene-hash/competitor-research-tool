@@ -223,8 +223,17 @@ st.markdown("""
 
 with st.sidebar:
     st.header("検索設定（本番利用）")
-    provider = st.selectbox("検索データの取得方法", ["デモモード", "Serper API", "Google Programmable Search"])
-    st.caption("本番利用では検索APIを選択してください。キーは保存されません。")
+    search_providers = ["デモモード", "Serper API", "Google Programmable Search"]
+    default_provider = 1 if os.getenv("SERPER_API_KEY") else 0
+    provider = st.selectbox(
+        "検索データの取得方法",
+        search_providers,
+        index=default_provider,
+    )
+    if os.getenv("SERPER_API_KEY"):
+        st.caption("Serper APIキーはSecretsから安全に読み込まれています。")
+    else:
+        st.caption("本番利用では検索APIを選択してください。画面に入力したキーは保存されません。")
     if provider == "Serper API":
         serper_key = st.text_input("Serper APIキー", value=os.getenv("SERPER_API_KEY", ""), type="password")
     elif provider == "Google Programmable Search":
